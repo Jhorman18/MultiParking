@@ -1,9 +1,16 @@
+import Image from "next/image";
 import { FaQrcode, FaCar, FaCreditCard, FaShieldAlt, FaSignInAlt } from "react-icons/fa";
 
 export default function Home() {
   return (
     <main className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-b from-night to-eerie text-center px-6">
-      {/* Título */}
+      <Image
+        src="/logoMP.png"
+        alt="MultiParking Logo"
+        width={250}
+        height={150}
+        className=""
+      />
       <h1 className="text-4xl md:text-6xl font-bold text-slateblue mb-4">
         Bienvenido a <span className="text-indigo">MultiParking</span>
       </h1>
@@ -12,17 +19,14 @@ export default function Home() {
         anticipación, ingresa con código QR y paga digitalmente.
       </p>
 
-      {/* Botón de Login */}
       <a
         href="/login"
-        className="mt-8 bg-slateblue hover:bg-indigo text-white px-6 py-3 rounded-lg font-medium flex items-center gap-2 transition mb-12 shadow-lg shadow-slateblue/20"
+        className="mt-4 bg-slateblue hover:bg-indigo text-white px-6 py-3 rounded-lg font-medium flex items-center gap-2 transition mb-12 shadow-lg shadow-slateblue/20"
       >
         <FaSignInAlt /> Iniciar sesión
       </a>
 
-      {/* Funcionalidades */}
-      <div className="mt-8 grid grid-cols-1 md:grid-cols-4 gap-6 max-w-5xl">
-        {/* QR Entry */}
+      <div className="mt-4 mb-6 grid grid-cols-1 md:grid-cols-4 gap-6 max-w-5xl">
         <div className="bg-raisin/80 rounded-xl p-6 shadow-md hover:shadow-xl hover:shadow-slateblue/20 transition border border-eerie">
           <div className="flex justify-center text-slateblue text-3xl mb-3">
             <FaQrcode />
@@ -33,7 +37,6 @@ export default function Home() {
           </p>
         </div>
 
-        {/* Vehicle Tracking */}
         <div className="bg-raisin/80 rounded-xl p-6 shadow-md hover:shadow-xl hover:shadow-slateblue/20 transition border border-eerie">
           <div className="flex justify-center text-slateblue text-3xl mb-3">
             <FaCar />
@@ -44,7 +47,6 @@ export default function Home() {
           </p>
         </div>
 
-        {/* Digital Payments */}
         <div className="bg-raisin/80 rounded-xl p-6 shadow-md hover:shadow-xl hover:shadow-slateblue/20 transition border border-eerie">
           <div className="flex justify-center text-slateblue text-3xl mb-3">
             <FaCreditCard />
@@ -55,7 +57,6 @@ export default function Home() {
           </p>
         </div>
 
-        {/* Role-Based Access */}
         <div className="bg-raisin/80 rounded-xl p-6 shadow-md hover:shadow-xl hover:shadow-slateblue/20 transition border border-eerie">
           <div className="flex justify-center text-slateblue text-3xl mb-3">
             <FaShieldAlt />
