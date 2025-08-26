@@ -1,7 +1,14 @@
+'use client'
+
+import React, { useState } from 'react'
 import Image from "next/image";
 import { FaQrcode, FaCar, FaCreditCard, FaShieldAlt, FaSignInAlt } from "react-icons/fa";
+import LoginModal from '@/components/Login/LoginModal';
 
 export default function Home() {
+
+  const [showLogin, setShowLogin] = useState(false);
+
   return (
     <main className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-b from-night to-eerie text-center px-6">
       <Image
@@ -19,12 +26,12 @@ export default function Home() {
         anticipación, ingresa con código QR y paga digitalmente.
       </p>
 
-      <a
-        href="/login"
-        className="mt-4 bg-slateblue hover:bg-indigo text-white px-6 py-3 rounded-lg font-medium flex items-center gap-2 transition mb-12 shadow-lg shadow-slateblue/20"
+      <button
+        onClick={() => setShowLogin(true)}
+        className="cursor-pointer mt-4 bg-slateblue hover:bg-indigo text-white px-6 py-3 rounded-lg font-medium flex items-center gap-2 transition mb-12 shadow-lg shadow-slateblue/20"
       >
         <FaSignInAlt /> Iniciar sesión
-      </a>
+      </button>
 
       <div className="mt-4 mb-6 grid grid-cols-1 md:grid-cols-4 gap-6 max-w-5xl">
         <div className="bg-raisin/80 rounded-xl p-6 shadow-md hover:shadow-xl hover:shadow-slateblue/20 transition border border-eerie">
@@ -67,6 +74,6 @@ export default function Home() {
           </p>
         </div>
       </div>
-    </main>
+      <LoginModal show={showLogin} onClose={() => setShowLogin(false)} />    </main>
   );
 }
