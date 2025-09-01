@@ -1,0 +1,152 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model descuentos {
+  idDescuento          Int                    @id @default(autoincrement())
+  desNombre            String                 @db.VarChar(100)
+  desTipo              descuentos_desTipo
+  desValor             Decimal                @db.Decimal(10, 2)
+  desDescripcion       String?                @db.Text
+  desCondicion         String?                @db.VarChar(255)
+  desFechaInicio       DateTime?              @db.Date
+  desFechaFin          DateTime?              @db.Date
+  desActivo            Boolean?               @default(true)
+  descuentos_aplicados descuentos_aplicados[]
+}
+
+model descuentos_aplicados {
+  idDescuentoAplicado Int        @id @default(autoincrement())
+  fkIdPago            Int
+  fkIdDescuento       Int
+  montoDescontado     Decimal    @db.Decimal(10, 2)
+  pagos               pagos      @relation(fields: [fkIdPago], references: [idPago], onUpdate: Restrict, map: "descuentos_aplicados_ibfk_1")
+  descuentos          descuentos @relation(fields: [fkIdDescuento], references: [idDescuento], onUpdate: Restrict, map: "descuentos_aplicados_ibfk_2")
+
+  @@index([fkIdDescuento], map: "fkIdDescuento")
+  @@index([fkIdPago], map: "fkIdPago")
+}
+
+model espacios {
+  idEspacio  Int                @id @default(autoincrement())
+  espNumero  String             @db.VarChar(25)
+  espPiso    String             @db.VarChar(25)
+  espTipo    String             @db.VarChar(50)
+  espEstado  espacios_espEstado
+  fkIdTarifa Int?
+  tarifas    tarifas?           @relation(fields: [fkIdTarifa], references: [idTarifa], map: "fk_espacios_tarifas")
+  parqueos   parqueos[]
+  reservas   reservas[]
+
+  @@index([fkIdTarifa], map: "fk_espacios_tarifas")
+}
+
+model pagos {
+  idPago               Int                    @id @default(autoincrement())
+  pagFechaPago         DateTime               @default(now()) @db.Timestamp(0)
+  pagMonto             Decimal?               @db.Decimal(10, 2)
+  pagMetodo            String?                @db.VarChar(100)
+  pagEstado            String?                @db.VarChar(100)
+  fkIdParqueo          Int
+  descuentos_aplicados descuentos_aplicados[]
+  parqueos             parqueos               @relation(fields: [fkIdParqueo], references: [idParqueo], onUpdate: Restrict, map: "pagos_ibfk_1")
+
+  @@index([fkIdParqueo], map: "fkIdParqueo")
+}
+
+model parqueos {
+  idParqueo      Int       @id @default(autoincrement())
+  parHoraEntrada DateTime  @default(now()) @db.Timestamp(0)
+  parHoraSalida  DateTime? @db.Timestamp(0)
+  fkIdVehiculo   Int
+  fkIdTarifa     Int
+  fkIdEspacio    Int?
+  pagos          pagos[]
+  espacios       espacios? @relation(fields: [fkIdEspacio], references: [idEspacio], onDelete: Restrict, map: "fk_parqueos_espacios")
+  vehiculos      vehiculos @relation(fields: [fkIdVehiculo], references: [idVehiculo], onUpdate: Restrict, map: "parqueos_ibfk_1")
+  tarifas        tarifas   @relation(fields: [fkIdTarifa], references: [idTarifa], onUpdate: Restrict, map: "parqueos_ibfk_2")
+
+  @@index([fkIdTarifa], map: "fkIdTarifa")
+  @@index([fkIdVehiculo], map: "fkIdVehiculo")
+  @@index([fkIdEspacio], map: "fk_parqueos_espacios")
+}
+
+model reservas {
+  idReserva       Int                 @id @default(autoincrement())
+  resFechaReserva DateTime            @db.Date
+  resHoraInicio   DateTime            @db.DateTime(0)
+  resHoraFin      DateTime            @db.DateTime(0)
+  resEstado       reservas_resEstado? @default(RESERVADO)
+  fkIdEspacio     Int?
+  espacios        espacios?           @relation(fields: [fkIdEspacio], references: [idEspacio], map: "fk_reservas_espacios")
+
+  @@index([fkIdEspacio], map: "idx_reservas_espacio")
+  @@index([resHoraInicio, resHoraFin], map: "idx_reservas_fechas")
+}
+
+model roles {
+  idRol          Int        @id @default(autoincrement())
+  rolTipoRol     String     @db.VarChar(100)
+  rolDescripcion String?    @db.Text
+  usuarios       usuarios[]
+}
+
+model tarifas {
+  idTarifa       Int        @id @default(autoincrement())
+  tarTipoEspacio String?    @db.VarChar(50)
+  tarValorHora   Decimal?   @db.Decimal(10, 2)
+  espacios       espacios[]
+  parqueos       parqueos[]
+}
+
+model usuarios {
+  idUsuario         Int         @id @default(autoincrement())
+  usuDocumento      String      @unique(map: "usuDocumento") @db.VarChar(50)
+  usuNombreCompleto String      @db.VarChar(255)
+  usuCorreo         String?     @db.VarChar(255)
+  usuTelefono       String?     @db.VarChar(50)
+  usuClaveHash      String?     @db.VarChar(255)
+  usuFechaRegistro  DateTime    @default(now()) @db.Timestamp(0)
+  fkIdRol           Int
+  roles             roles       @relation(fields: [fkIdRol], references: [idRol], onUpdate: Restrict, map: "usuarios_ibfk_1")
+  vehiculos         vehiculos[]
+
+  @@index([fkIdRol], map: "fkIdRol")
+}
+
+model vehiculos {
+  idVehiculo  Int        @id @default(autoincrement())
+  vehPlaca    String     @unique(map: "vehPlaca") @db.VarChar(50)
+  vehTipo     String?    @db.VarChar(50)
+  vehColor    String?    @db.VarChar(50)
+  vehMarca    String?    @db.VarChar(50)
+  vehModelo   String?    @db.VarChar(50)
+  fkIdUsuario Int
+  parqueos    parqueos[]
+  usuarios    usuarios   @relation(fields: [fkIdUsuario], references: [idUsuario], onUpdate: Restrict, map: "vehiculos_ibfk_1")
+
+  @@index([fkIdUsuario], map: "fkIdUsuario")
+}
+
+enum descuentos_desTipo {
+  porcentaje
+  valor_fijo
+}
+
+enum espacios_espEstado {
+  DISPONIBLE
+  OCUPADO
+  INACTIVO
+  RESERVADO
+}
+
+enum reservas_resEstado {
+  RESERVADO
+  CANCELADO
+  FINALIZADO
+}
