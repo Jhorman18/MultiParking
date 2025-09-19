@@ -14,6 +14,7 @@
   --font-mono: var(--font-geist-mono);
 
   /* 🎨 Paleta personalizada */
+  --color-morado: #5B468B;      /* Dark purple LandingPage */
   --color-slateblue: #8B5CF6;  /* Medium slate blue */
   --color-indigo: #A78BFA;     /* Tropical indigo */
   --color-night: #0F0F12;      /* Night */
